@@ -1,24 +1,43 @@
 /**
- * JSX INTRO FOR DESIGNERS
- * -----------------------
- * This file is the same login screen you had in HTML, but written in JSX.
- * Comments below explain the key differences between HTML and JSX.
+ * APP.JSX – Root component (login → dashboard)
+ * --------------------------------------------
+ * This file controls which screen the user sees:
+ * - Not logged in → login form (this file)
+ * - Logged in → Dashboard (Dashboard.jsx)
  *
- * QUICK REFERENCE - What changes when you go from HTML to JSX:
- *   HTML          →  JSX
- *   class         →  className   (class is a reserved word in JavaScript)
- *   for           →  htmlFor     (for is reserved; connects label to input)
- *   stroke-width  →  strokeWidth (hyphenated attributes become camelCase)
- *   HTML comments   →  { slash-star comment star-slash }  (JSX uses curly braces)
- *   <img src="x">  →  <img src="x" />   (void elements must self-close)
+ * HOW IT WORKS:
+ * - useState(false) keeps track of "are they logged in?"
+ * - When the form is submitted, handleSubmit runs: we prevent the page from
+ *   reloading, then call setIsLoggedIn(true). React re-renders and shows
+ *   the Dashboard instead. No new page load – that's a "single-page app."
+ *
+ * HTML → JSX: class → className, for → htmlFor, stroke-width → strokeWidth,
+ * comments: <!-- --> → { slash-star star-slash }, <img> → <img />
  */
 
+import { useState } from 'react'
+import Dashboard from './Dashboard.jsx'
+
 function App() {
+  /* State: one value (isLoggedIn) that can change. When it becomes true, we show Dashboard. */
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  /* Called when the user clicks "Log in". We stop the form from reloading the page, then set state. */
+  function handleSubmit(e) {
+    e.preventDefault()
+    setIsLoggedIn(true)
+  }
+
+  /* Conditional rendering: only one of these is on screen at a time. */
+  if (isLoggedIn) {
+    return <Dashboard />
+  }
+
+  /* Login screen: nav bar + main content (form, links, social login). */
   return (
     <>
-      {/* ========== TOP NAVIGATION ========== */}
-      {/* In HTML you'd write: <nav class="top-nav"> */}
-      {/* In JSX we use className instead of class */}
+      {/* ---------- TOP NAVIGATION ---------- */}
+      {/* Semantic HTML: <nav> = navigation. In JSX we use className (not class). */}
       <nav className="top-nav">
         <div className="nav-container">
           <div className="logo">
@@ -36,7 +55,7 @@ function App() {
       </nav>
       <div className="nav-separator" />
 
-      {/* ========== MAIN CONTENT ========== */}
+      {/* ---------- MAIN CONTENT (centred column) ---------- */}
       <div className="content-wrapper">
         <main className="main-content">
           <h1 className="welcome-title">Welcome back.</h1>
@@ -44,10 +63,11 @@ function App() {
             New here? <a href="#" className="signup-link">Sign up</a>
           </p>
 
-          {/* ========== LOGIN FORM ========== */}
-          <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+          {/* ---------- LOGIN FORM ---------- */}
+          {/* onSubmit: we pass our handleSubmit so we can run JS (setIsLoggedIn) instead of reloading. */}
+          <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              {/* HTML: <label for="email">. JSX: htmlFor (connects to input id) */}
+              {/* In JSX, "for" becomes htmlFor – it links this label to the input with id="email". */}
               <label htmlFor="email">Your email address</label>
               <input type="email" id="email" name="email" required />
             </div>
@@ -70,7 +90,7 @@ function App() {
 
           <a href="#" className="trouble-link">Trouble logging in?</a>
 
-          {/* ========== ALTERNATIVE LOGIN ========== */}
+          {/* ---------- ALTERNATIVE LOGIN (social / passkey) ---------- */}
           <div className="alternative-login">
             <p className="or-text">Or log in with</p>
             <div className="social-buttons">
